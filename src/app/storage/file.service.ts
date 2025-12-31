@@ -91,7 +91,10 @@ export class FileService {
    * @returns Observable of file blob
    */
   previewFile(id: string): Observable<Blob> {
-    return this.http.get(API_URLS.filePreview(id), { responseType: 'blob' });
+    return this.http.get(API_URLS.filePreview(id), { 
+      responseType: 'blob',
+      observe: 'body'
+    });
   }
 
   /**

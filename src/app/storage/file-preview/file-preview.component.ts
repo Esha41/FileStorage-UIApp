@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FileService } from '../file.service';
 import { StoredFile } from '../models/file.model';
 
@@ -14,6 +15,7 @@ import { StoredFile } from '../models/file.model';
 export class FilePreviewComponent implements OnInit, OnDestroy {
   file: StoredFile | null = null;
   previewUrl: string | null = null;
+  safePreviewUrl: SafeResourceUrl | null = null;
   isLoading = true;
   errorMessage: string | null = null;
   fileId: string = '';
@@ -21,7 +23,8 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private fileService: FileService
+    private fileService: FileService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -41,11 +44,30 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.errorMessage = null;
 
-    // Load file metadata
-    this.fileService.getFile(this.fileId).subscribe({
-      next: (file) => {
-        this.file = file;
-        this.loadPreview();
+    // Get file metadata from the list endpoint (since GET /api/files/{id} doesn't exist)
+    this.fileService.listFiles().subscribe({
+      next: (response) => {
+        // Handle different response formats
+        let files: StoredFile[] = [];
+        
+        if (Array.isArray(response)) {
+          files = response;
+        } else if (response && Array.isArray((response as any).data)) {
+          files = (response as any).data;
+        } else if (response && typeof response === 'object') {
+          files = (response as any).items || (response as any).results || [];
+        }
+
+        // Find the file by ID
+        const file = files.find(f => f.id === this.fileId);
+        
+        if (file) {
+          this.file = file;
+          this.loadPreview();
+        } else {
+          this.errorMessage = 'File not found.';
+          this.isLoading = false;
+        }
       },
       error: (error) => {
         this.errorMessage = 'Failed to load file. Please try again.';
@@ -67,17 +89,33 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
     if (isImage || isPdf) {
       this.fileService.previewFile(this.fileId).subscribe({
         next: (blob) => {
-          this.previewUrl = URL.createObjectURL(blob);
-          this.isLoading = false;
+          try {
+            // Create object URL for the blob
+            if (blob && blob.size > 0) {
+              this.previewUrl = URL.createObjectURL(blob);
+              // Sanitize URL for iframe (especially for PDFs)
+              this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.previewUrl);
+              console.log('Preview URL created:', this.previewUrl, 'Blob size:', blob.size, 'Content type:', blob.type);
+              this.isLoading = false;
+            } else {
+              console.warn('Preview blob is empty');
+              this.errorMessage = 'Preview file is empty.';
+              this.isLoading = false;
+            }
+          } catch (error) {
+            console.error('Error creating preview URL:', error);
+            this.errorMessage = 'Failed to create preview.';
+            this.isLoading = false;
+          }
         },
         error: (error) => {
           console.error('Error loading preview:', error);
-          this.errorMessage = 'Failed to load preview.';
+          this.errorMessage = error.error?.title || error.message || 'Failed to load preview.';
           this.isLoading = false;
         }
       });
     } else {
-      this.errorMessage = 'Preview not available for this file type.';
+      // For non-image/PDF files, we can still show file info
       this.isLoading = false;
     }
   }
@@ -144,6 +182,34 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
    */
   get isPdf(): boolean {
     return this.file?.contentType.includes('pdf') || false;
+  }
+
+  /**
+   * Format tags for display
+   */
+  formatTags(tags: any): string {
+    if (!tags) return '';
+    if (Array.isArray(tags)) {
+      return tags.join(', ');
+    }
+    if (typeof tags === 'string') {
+      return tags;
+    }
+    return '';
+  }
+
+  /**
+   * Check if file has tags
+   */
+  hasTags(file: StoredFile): boolean {
+    if (!file.tags) return false;
+    if (Array.isArray(file.tags)) {
+      return file.tags.length > 0;
+    }
+    if (typeof file.tags === 'string') {
+      return (file.tags as string).trim().length > 0;
+    }
+    return false;
   }
 
   /**

@@ -29,9 +29,9 @@
       <span class="label">Created:</span>
       <span class="value">{{ formatDate(file.createdAtUtc) }}</span>
     </div>
-    <div class="info-row" *ngIf="file.tags.length > 0">
+    <div class="info-row" *ngIf="hasTags(file)">
       <span class="label">Tags:</span>
-      <span class="value">{{ file.tags.join(', ') }}</span>
+      <span class="value">{{ formatTags(file.tags) }}</span>
     </div>
     <div class="actions">
       <button class="btn-download" (click)="downloadFile()">⬇️ Download</button>
@@ -47,7 +47,7 @@
 
     <!-- PDF Preview -->
     <div class="pdf-preview" *ngIf="isPdf">
-      <iframe [src]="previewUrl" [title]="file.originalName"></iframe>
+      <iframe [src]="safePreviewUrl" [title]="file.originalName"></iframe>
     </div>
   </div>
 

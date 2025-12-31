@@ -1,0 +1,204 @@
+.preview-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .btn-back {
+    padding: 8px 16px;
+    background-color: #e2e8f0;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4a5568;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: #cbd5e0;
+    }
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1a202c;
+    margin: 0;
+    flex: 1;
+    word-break: break-word;
+  }
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 60px 20px;
+  color: #718096;
+
+  button {
+    margin-top: 16px;
+    padding: 10px 20px;
+    background-color: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+
+    &:hover {
+      background-color: #5a67d8;
+    }
+  }
+}
+
+.error {
+  color: #e53e3e;
+}
+
+.file-info {
+  background-color: #f7fafc;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+
+  .info-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 14px;
+
+    .label {
+      font-weight: 600;
+      color: #4a5568;
+      min-width: 80px;
+    }
+
+    .value {
+      color: #2d3748;
+    }
+  }
+
+  .actions {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+
+    .btn-download {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+    }
+  }
+}
+
+.preview-content {
+  background-color: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .image-preview {
+    width: 100%;
+    text-align: center;
+
+    img {
+      max-width: 100%;
+      max-height: 80vh;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .pdf-preview {
+    width: 100%;
+    height: 80vh;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  }
+}
+
+.no-preview {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f7fafc;
+  border-radius: 12px;
+  border: 2px dashed #cbd5e0;
+
+  p {
+    color: #718096;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .btn-download {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .preview-container {
+    padding: 16px;
+  }
+
+  .preview-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    h1 {
+      font-size: 20px;
+    }
+  }
+
+  .preview-content {
+    padding: 10px;
+
+    .pdf-preview {
+      height: 60vh;
+    }
+  }
+}
+

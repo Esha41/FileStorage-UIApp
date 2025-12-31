@@ -1,1 +1,59 @@
-<p>file-preview works!</p>
+<div class="preview-container">
+  <div class="preview-header">
+    <button class="btn-back" (click)="goBack()">← Back to Files</button>
+    <h1 *ngIf="file">{{ file.originalName }}</h1>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading" *ngIf="isLoading">
+    <p>Loading preview...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error" *ngIf="errorMessage && !isLoading">
+    <p>{{ errorMessage }}</p>
+    <button (click)="goBack()">Go Back</button>
+  </div>
+
+  <!-- File Info -->
+  <div class="file-info" *ngIf="file && !isLoading">
+    <div class="info-row">
+      <span class="label">Size:</span>
+      <span class="value">{{ formatFileSize(file.sizeBytes) }}</span>
+    </div>
+    <div class="info-row">
+      <span class="label">Type:</span>
+      <span class="value">{{ file.contentType }}</span>
+    </div>
+    <div class="info-row">
+      <span class="label">Created:</span>
+      <span class="value">{{ formatDate(file.createdAtUtc) }}</span>
+    </div>
+    <div class="info-row" *ngIf="file.tags.length > 0">
+      <span class="label">Tags:</span>
+      <span class="value">{{ file.tags.join(', ') }}</span>
+    </div>
+    <div class="actions">
+      <button class="btn-download" (click)="downloadFile()">⬇️ Download</button>
+    </div>
+  </div>
+
+  <!-- Preview Content -->
+  <div class="preview-content" *ngIf="file && previewUrl && !isLoading">
+    <!-- Image Preview -->
+    <div class="image-preview" *ngIf="isImage">
+      <img [src]="previewUrl" [alt]="file.originalName" />
+    </div>
+
+    <!-- PDF Preview -->
+    <div class="pdf-preview" *ngIf="isPdf">
+      <iframe [src]="previewUrl" [title]="file.originalName"></iframe>
+    </div>
+  </div>
+
+  <!-- No Preview Available -->
+  <div class="no-preview" *ngIf="file && !previewUrl && !isLoading && !errorMessage">
+    <p>Preview not available for this file type.</p>
+    <button class="btn-download" (click)="downloadFile()">⬇️ Download File</button>
+  </div>
+</div>

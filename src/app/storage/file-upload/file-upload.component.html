@@ -1,1 +1,145 @@
-<p>file-upload works!</p>
+<div class="upload-container">
+  <div class="upload-header">
+    <h1>Upload Files</h1>
+    <p>Drag and drop files here or click to browse</p>
+  </div>
+
+  <!-- Tags Input -->
+  <div class="tags-section">
+    <label for="tags">Tags (comma-separated)</label>
+    <input
+      type="text"
+      id="tags"
+      [(ngModel)]="tags"
+      class="tags-input"
+      placeholder="e.g., important, project, document"
+    />
+    <small>Tags will be applied to all files in this upload session</small>
+  </div>
+
+  <!-- Drag and Drop Zone -->
+  <div
+    class="drop-zone"
+    [class.dragging]="isDragging"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    (click)="fileInput.click()"
+  >
+    <input
+      #fileInput
+      type="file"
+      multiple
+      (change)="onFileSelected($event)"
+      class="file-input"
+      accept="*/*"
+    />
+    <div class="drop-zone-content">
+      <div class="upload-icon">📤</div>
+      <h3>Drop files here</h3>
+      <p>or click to browse</p>
+      <small>Maximum file size: {{ formatFileSize(maxFileSize) }}</small>
+    </div>
+  </div>
+
+  <!-- Upload Statistics -->
+  <div class="upload-stats" *ngIf="files.length > 0">
+    <div class="stat-item">
+      <span class="stat-label">Total:</span>
+      <span class="stat-value">{{ uploadStats.total }}</span>
+    </div>
+    <div class="stat-item success">
+      <span class="stat-label">Success:</span>
+      <span class="stat-value">{{ uploadStats.success }}</span>
+    </div>
+    <div class="stat-item error" *ngIf="uploadStats.error > 0">
+      <span class="stat-label">Failed:</span>
+      <span class="stat-value">{{ uploadStats.error }}</span>
+    </div>
+    <div class="stat-item uploading" *ngIf="uploadStats.uploading > 0">
+      <span class="stat-label">Uploading:</span>
+      <span class="stat-value">{{ uploadStats.uploading }}</span>
+    </div>
+  </div>
+
+  <!-- File List -->
+  <div class="files-list" *ngIf="files.length > 0">
+    <div class="files-header">
+      <h2>Files</h2>
+      <button
+        class="btn-clear"
+        *ngIf="allUploadsComplete"
+        (click)="clearCompleted()"
+      >
+        Clear Completed
+      </button>
+    </div>
+
+    <div class="file-item" *ngFor="let fileItem of files; let i = index" [class]="'status-' + fileItem.status">
+      <div class="file-info">
+        <div class="file-icon">{{ getFileIcon(fileItem.file.type) }}</div>
+        <div class="file-details">
+          <div class="file-name">{{ fileItem.file.name }}</div>
+          <div class="file-meta">
+            <span class="file-size">{{ formatFileSize(fileItem.file.size) }}</span>
+            <span class="file-type">{{ fileItem.file.type || 'Unknown' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="file-status">
+        <!-- Progress Bar -->
+        <div class="progress-container" *ngIf="fileItem.status === 'uploading' || fileItem.status === 'pending'">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [style.width.%]="fileItem.progress"
+            ></div>
+          </div>
+          <span class="progress-text">{{ fileItem.progress }}%</span>
+        </div>
+
+        <!-- Success State -->
+        <div class="status-success" *ngIf="fileItem.status === 'success'">
+          <span class="success-icon">✓</span>
+          <span class="success-text">Uploaded successfully</span>
+        </div>
+
+        <!-- Error State -->
+        <div class="status-error" *ngIf="fileItem.status === 'error'">
+          <span class="error-icon">✗</span>
+          <span class="error-text">{{ fileItem.error || 'Upload failed' }}</span>
+        </div>
+      </div>
+
+      <div class="file-actions">
+        <!-- Retry Button -->
+        <button
+          class="btn-retry"
+          *ngIf="fileItem.status === 'error'"
+          (click)="retryUpload(fileItem)"
+          title="Retry upload"
+        >
+          🔄 Retry
+        </button>
+
+        <!-- Remove Button -->
+        <button
+          class="btn-remove"
+          (click)="removeFile(i)"
+          [disabled]="fileItem.status === 'uploading'"
+          title="Remove file"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="actions" *ngIf="allUploadsComplete && uploadStats.success > 0">
+    <button class="btn-primary" (click)="goToFileList()">
+      View All Files
+    </button>
+  </div>
+</div>

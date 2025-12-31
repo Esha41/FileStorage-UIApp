@@ -1,1 +1,137 @@
-<p>file-list works!</p>
+<div class="file-list-container">
+  <div class="header">
+    <h1>File Storage</h1>
+    <button class="btn-upload" (click)="goToUpload()">📤 Upload Files</button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <h2>Filters</h2>
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>Name</label>
+        <input
+          type="text"
+          [(ngModel)]="filters.name"
+          (input)="applyFilters()"
+          placeholder="Search by name..."
+        />
+      </div>
+
+      <div class="filter-group">
+        <label>Tag</label>
+        <input
+          type="text"
+          [(ngModel)]="filters.tag"
+          (input)="applyFilters()"
+          placeholder="Filter by tag..."
+        />
+      </div>
+
+      <div class="filter-group">
+        <label>Content Type</label>
+        <input
+          type="text"
+          [(ngModel)]="filters.contentType"
+          (input)="applyFilters()"
+          placeholder="e.g., image, pdf..."
+        />
+      </div>
+
+      <div class="filter-group">
+        <label>Start Date</label>
+        <input
+          type="date"
+          [(ngModel)]="filters.startDate"
+          (change)="applyFilters()"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label>End Date</label>
+        <input
+          type="date"
+          [(ngModel)]="filters.endDate"
+          (change)="applyFilters()"
+        />
+      </div>
+
+      <div class="filter-group">
+        <button class="btn-clear" (click)="clearFilters()">Clear Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading" *ngIf="isLoading">
+    <p>Loading files...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error" *ngIf="errorMessage && !isLoading">
+    <p>{{ errorMessage }}</p>
+    <button (click)="loadFiles()">Retry</button>
+  </div>
+
+  <!-- Files List -->
+  <div class="files-section" *ngIf="!isLoading && !errorMessage">
+    <div class="files-header">
+      <p>Showing {{ paginatedFiles.length }} of {{ filteredFiles.length }} files</p>
+    </div>
+
+    <div class="files-list" *ngIf="paginatedFiles.length > 0">
+      <div class="file-item" *ngFor="let file of paginatedFiles">
+        <div class="file-icon">{{ getFileIcon(file.contentType) }}</div>
+        <div class="file-info">
+          <div class="file-name" (click)="previewFile(file)">{{ file.originalName }}</div>
+          <div class="file-meta">
+            <span>{{ formatFileSize(file.sizeBytes) }}</span>
+            <span>{{ file.contentType }}</span>
+            <span>{{ formatDate(file.createdAtUtc) }}</span>
+            <span *ngIf="hasTags(file)">
+              Tags: {{ formatTags(file.tags) }}
+            </span>
+          </div>
+        </div>
+        <div class="file-actions">
+          <button class="btn-preview" (click)="previewFile(file)" title="Preview">👁️</button>
+          <button class="btn-download" (click)="downloadFile(file)" title="Download">⬇️</button>
+          <button class="btn-delete" (click)="softDelete(file)" title="Delete">🗑️</button>
+          <button
+            class="btn-delete-hard"
+            *ngIf="isAdmin"
+            (click)="hardDelete(file)"
+            title="Hard Delete (Admin)"
+          >
+            ⚠️
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-files" *ngIf="paginatedFiles.length === 0">
+      <p>No files found</p>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button
+        class="btn-page"
+        [disabled]="currentPage === 1"
+        (click)="previousPage()"
+      >
+        Previous
+      </button>
+      <span class="page-info">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+      <button
+        class="btn-page"
+        [disabled]="currentPage === totalPages"
+        (click)="nextPage()"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+</div>

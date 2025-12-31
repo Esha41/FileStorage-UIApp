@@ -1,0 +1,96 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>File Storage Service</h1>
+      <p>Sign in to continue</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          class="form-control"
+          [class.error]="username?.invalid && username?.touched"
+          placeholder="Enter your username"
+          autocomplete="username"
+        />
+        <div class="error-message" *ngIf="username?.invalid && username?.touched">
+          <span *ngIf="username?.errors?.['required']">Username is required</span>
+          <span *ngIf="username?.errors?.['minlength']">Username must be at least 3 characters</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="form-control"
+          [class.error]="password?.invalid && password?.touched"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+        />
+        <div class="error-message" *ngIf="password?.invalid && password?.touched">
+          <span *ngIf="password?.errors?.['required']">Password is required</span>
+          <span *ngIf="password?.errors?.['minlength']">Password must be at least 3 characters</span>
+        </div>
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="isLoading || loginForm.invalid"
+        >
+          <span *ngIf="!isLoading">Sign In</span>
+          <span *ngIf="isLoading">Signing in...</span>
+        </button>
+      </div>
+
+      <div class="test-users-section">
+        <div class="test-users-header">
+          <h3>Test Users</h3>
+          <p>Click on a user to auto-fill credentials</p>
+        </div>
+        <div class="test-users-list">
+          <div 
+            *ngFor="let user of testUsers" 
+            class="test-user-card"
+            (click)="fillCredentials(user)"
+            [class.admin]="user.role === 'Admin'"
+          >
+            <div class="user-info">
+              <div class="user-role-badge" [class.admin-badge]="user.role === 'Admin'">
+                {{ user.role }}
+              </div>
+              <div class="user-credentials">
+                <div class="credential-row">
+                  <span class="label">Username:</span>
+                  <span class="value">{{ user.username }}</span>
+                </div>
+                <div class="credential-row">
+                  <span class="label">Password:</span>
+                  <span class="value">{{ user.password }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="click-hint">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 1L10.5 5.5L15.5 6.5L12 10L12.5 15L8 12.5L3.5 15L4 10L0.5 6.5L5.5 5.5L8 1Z" fill="currentColor" opacity="0.3"/>
+              </svg>
+              Click to use
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

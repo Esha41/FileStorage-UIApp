@@ -55,7 +55,7 @@ export class FileService {
     let httpParams = new HttpParams();
     
     if (params) {
-      if (params.page) httpParams = httpParams.set('page', params.page.toString());
+      if (params.pageNumber) httpParams = httpParams.set('pageNumber', params.pageNumber.toString());
       if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
       if (params.name) httpParams = httpParams.set('name', params.name);
       if (params.tag) httpParams = httpParams.set('tag', params.tag);

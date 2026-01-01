@@ -15,7 +15,6 @@ import { AuthService } from '../../core/auth.service';
 })
 export class FileListComponent implements OnInit {
   files: StoredFile[] = [];
-  filteredFiles: StoredFile[] = [];
   isLoading = false;
   errorMessage: string | null = null;
 
@@ -47,131 +46,57 @@ export class FileListComponent implements OnInit {
    * Load files from API
    */
   loadFiles(): void {
-    this.isLoading = true;
-    this.errorMessage = null;
+  this.isLoading = true;
+  this.errorMessage = null;
 
-    this.fileService.listFiles(this.filters).subscribe({
-      next: (response) => {
-        // Handle different response formats
-        let files: StoredFile[] = [];
-        
-        if (Array.isArray(response)) {
-          files = response;
-        } else if (response && Array.isArray((response as any).data)) {
-          files = (response as any).data;
-        } else if (response && typeof response === 'object') {
-          // If response is an object, try to extract array from common properties
-          files = (response as any).items || (response as any).results || [];
-        } else {
-          // If response is null, undefined, or unexpected format
-          console.warn('Unexpected API response format:', response);
-          files = [];
-        }
-        
-        // Ensure we have an array and filter out deleted files
-        // Also normalize tags to ensure they're always arrays
-        this.files = Array.isArray(files) 
-          ? files
-              .filter(f => f && !f.deletedAtUtc)
-              .map(f => this.normalizeFile(f))
-          : [];
-        this.applyFilters();
-        this.isLoading = false;
-      },
-      error: (error) => {
-        this.errorMessage = 'Failed to load files. Please try again.';
-        this.isLoading = false;
-        console.error('Error loading files:', error);
-        this.files = [];
-        this.filteredFiles = [];
-      }
-    });
-  }
+  const params = {
+    ...this.filters,
+    pageNumber: this.currentPage,
+    pageSize: this.pageSize
+  };
+
+  this.fileService.listFiles(params).subscribe({
+    next: (res: any) => {
+      this.files = res.items.map((f: StoredFile) => this.normalizeFile(f));
+      this.totalPages = Math.ceil(res.totalCount / this.pageSize);
+      this.isLoading = false;
+    },
+    error: () => {
+      this.errorMessage = 'Failed to load files';
+      this.isLoading = false;
+    }
+  });
+}
+
 
   /**
    * Apply filters to files
    */
   applyFilters(): void {
-    // Ensure files is always an array
-    if (!Array.isArray(this.files)) {
-      this.files = [];
-    }
-    
-    let filtered = [...this.files];
+  // Reset to first page whenever filters change
+  this.currentPage = 1;
 
-    // Filter by name
-    if (this.filters.name) {
-      const nameLower = this.filters.name.toLowerCase();
-      filtered = filtered.filter(f => 
-        f.originalName.toLowerCase().includes(nameLower)
-      );
-    }
-
-    // Filter by tag
-    if (this.filters.tag) {
-      const tagLower = this.filters.tag.toLowerCase();
-      filtered = filtered.filter(f => {
-        if (!f.tags || !Array.isArray(f.tags)) return false;
-        return f.tags.some(tag => 
-          typeof tag === 'string' && tag.toLowerCase().includes(tagLower)
-        );
-      });
-    }
-
-    // Filter by content type
-    if (this.filters.contentType) {
-      filtered = filtered.filter(f => 
-        f.contentType.includes(this.filters.contentType!)
-      );
-    }
-
-    // Filter by date range
-    if (this.filters.startDate) {
-      const startDate = new Date(this.filters.startDate);
-      filtered = filtered.filter(f => 
-        new Date(f.createdAtUtc) >= startDate
-      );
-    }
-
-    if (this.filters.endDate) {
-      const endDate = new Date(this.filters.endDate);
-      endDate.setHours(23, 59, 59, 999); // End of day
-      filtered = filtered.filter(f => 
-        new Date(f.createdAtUtc) <= endDate
-      );
-    }
-
-    this.filteredFiles = filtered;
-    this.totalPages = Math.ceil(this.filteredFiles.length / this.pageSize);
-    this.currentPage = 1; // Reset to first page when filtering
-  }
-
-  /**
-   * Get paginated files
-   */
-  get paginatedFiles(): StoredFile[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    const end = start + this.pageSize;
-    return this.filteredFiles.slice(start, end);
-  }
+  // Reload data from backend with filters + pagination
+  this.loadFiles();
+}
 
   /**
    * Go to next page
    */
-  nextPage(): void {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
-    }
+nextPage(): void {
+  if (this.currentPage < this.totalPages) {
+    this.currentPage++;
+    this.loadFiles();
   }
+}
 
-  /**
-   * Go to previous page
-   */
-  previousPage(): void {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-    }
+previousPage(): void {
+  if (this.currentPage > 1) {
+    this.currentPage--;
+    this.loadFiles();
   }
+}
+
 
   /**
    * Go to specific page

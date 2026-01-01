@@ -196,7 +196,7 @@ export class FileUploadComponent implements OnInit {
    * Navigate to file list
    */
   goToFileList(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/storage']);
   }
 
   /**

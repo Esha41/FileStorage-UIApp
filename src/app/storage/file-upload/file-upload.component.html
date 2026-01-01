@@ -18,14 +18,14 @@
   </div>
 
   <!-- Drag and Drop Zone -->
-  <div
-    class="drop-zone"
-    [class.dragging]="isDragging"
-    (dragover)="onDragOver($event)"
-    (dragleave)="onDragLeave($event)"
-    (drop)="onDrop($event)"
-    (click)="fileInput.click()"
-  >
+<div
+  class="drop-zone"
+  [class.dragging]="isDragging"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+>
+  <label class="drop-zone-label">
     <input
       #fileInput
       type="file"
@@ -40,27 +40,9 @@
       <p>or click to browse</p>
       <small>Maximum file size: {{ formatFileSize(maxFileSize) }}</small>
     </div>
-  </div>
+  </label>
+</div>
 
-  <!-- Upload Statistics -->
-  <div class="upload-stats" *ngIf="files.length > 0">
-    <div class="stat-item">
-      <span class="stat-label">Total:</span>
-      <span class="stat-value">{{ uploadStats.total }}</span>
-    </div>
-    <div class="stat-item success">
-      <span class="stat-label">Success:</span>
-      <span class="stat-value">{{ uploadStats.success }}</span>
-    </div>
-    <div class="stat-item error" *ngIf="uploadStats.error > 0">
-      <span class="stat-label">Failed:</span>
-      <span class="stat-value">{{ uploadStats.error }}</span>
-    </div>
-    <div class="stat-item uploading" *ngIf="uploadStats.uploading > 0">
-      <span class="stat-label">Uploading:</span>
-      <span class="stat-value">{{ uploadStats.uploading }}</span>
-    </div>
-  </div>
 
   <!-- File List -->
   <div class="files-list" *ngIf="files.length > 0">
@@ -71,7 +53,7 @@
         *ngIf="allUploadsComplete"
         (click)="clearCompleted()"
       >
-        Clear Completed
+        Remove Files
       </button>
     </div>
 

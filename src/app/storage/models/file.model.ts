@@ -27,7 +27,6 @@ export interface FileUploadResponse {
 export interface FileListParams {
   pageNumber?: number;
   pageSize?: number;
-  totalCount?: number;
   name?: string;
   tag?: string;
   contentType?: string;

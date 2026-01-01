@@ -60,12 +60,12 @@ export class FileService {
       if (params.name) httpParams = httpParams.set('name', params.name);
       if (params.tag) httpParams = httpParams.set('tag', params.tag);
       if (params.contentType) httpParams = httpParams.set('contentType', params.contentType);
-      if (params.startDate) httpParams = httpParams.set('startDate', params.startDate);
-      if (params.endDate) httpParams = httpParams.set('endDate', params.endDate);
+      if (params.dateFrom) httpParams = httpParams.set('dateFrom', params.dateFrom);
+      if (params.dateTo) httpParams = httpParams.set('dateTo', params.dateTo);
     }
    else {
     // If no params passed, at least send page 1 & size 100 by default
-    httpParams = httpParams.set('pageNumber', '1').set('pageSize', '100');
+    httpParams = httpParams.set('pageNumber', '1').set('pageSize', '  100');
   }
     return this.http.get<StoredFile[]>(this.apiUrl, { params: httpParams });
   }

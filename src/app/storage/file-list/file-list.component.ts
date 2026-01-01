@@ -28,8 +28,8 @@ export class FileListComponent implements OnInit {
     name: '',
     tag: '',
     contentType: '',
-    startDate: '',
-    endDate: ''
+    dateFrom: '',
+    dateTo: ''
   };
 
   constructor(
@@ -52,7 +52,9 @@ export class FileListComponent implements OnInit {
   const params = {
     ...this.filters,
     pageNumber: this.currentPage,
-    pageSize: this.pageSize
+    pageSize: this.pageSize,
+    startDate: this.filters.dateFrom ? new Date(this.filters.dateFrom).toISOString() : undefined,
+    endDate: this.filters.dateTo ? new Date(this.filters.dateTo).toISOString() : undefined,
   };
 
   this.fileService.listFiles(params).subscribe({
@@ -115,8 +117,8 @@ previousPage(): void {
       name: '',
       tag: '',
       contentType: '',
-      startDate: '',
-      endDate: ''
+      dateFrom: '',
+      dateTo: ''
     };
     this.applyFilters();
   }

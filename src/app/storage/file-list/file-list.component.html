@@ -42,7 +42,7 @@
         <label>Start Date</label>
         <input
           type="date"
-          [(ngModel)]="filters.startDate"
+          [(ngModel)]="filters.dateFrom"
           (change)="applyFilters()"
         />
       </div>
@@ -51,7 +51,7 @@
         <label>End Date</label>
         <input
           type="date"
-          [(ngModel)]="filters.endDate"
+          [(ngModel)]="filters.dateTo"
           (change)="applyFilters()"
         />
       </div>

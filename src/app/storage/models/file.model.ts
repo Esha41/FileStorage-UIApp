@@ -30,7 +30,7 @@ export interface FileListParams {
   name?: string;
   tag?: string;
   contentType?: string;
-  startDate?: string;
-  endDate?: string;
+  dateFrom?: string;
+  dateTo?: string;
 }
 

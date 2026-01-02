@@ -74,7 +74,6 @@ export class FileListComponent implements OnInit {
   this.currentPage = 1;
 
   this.loadFiles();
-  this.toastService.info('Filters applied');
 }
 
 nextPage(): void {
@@ -226,5 +225,10 @@ previousPage(): void {
 
   previewFile(file: StoredFile): void {
     this.router.navigate(['/storage/preview', file.id]);
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.toastService.info('Logged out successfully');
   }
 }

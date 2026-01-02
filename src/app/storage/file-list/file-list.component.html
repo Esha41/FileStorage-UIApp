@@ -1,7 +1,10 @@
 <div class="file-list-container">
   <div class="header">
     <h1>File Storage</h1>
-    <button class="btn-upload" (click)="goToUpload()">📤 Upload Files</button>
+    <div class="header-actions">
+      <button class="btn-upload" (click)="goToUpload()">📤 Upload Files</button>
+      <button class="btn-logout" (click)="logout()" title="Logout">🚪 Logout</button>
+    </div>
   </div>
 
   <!-- Filters -->

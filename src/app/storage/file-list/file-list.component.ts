@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FileService } from '../file.service';
 import { StoredFile, FileListParams } from '../models/file.model';
 import { AuthService } from '../../core/auth.service';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-file-list',
@@ -35,7 +36,8 @@ export class FileListComponent implements OnInit {
   constructor(
     private fileService: FileService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -80,6 +82,7 @@ export class FileListComponent implements OnInit {
 
   // Reload data from backend with filters + pagination
   this.loadFiles();
+  this.toastService.info('Filters applied');
 }
 
   /**
@@ -89,6 +92,7 @@ nextPage(): void {
   if (this.currentPage < this.totalPages) {
     this.currentPage++;
     this.loadFiles();
+    this.toastService.info(`Navigated to page ${this.currentPage}`);
   }
 }
 
@@ -96,6 +100,7 @@ previousPage(): void {
   if (this.currentPage > 1) {
     this.currentPage--;
     this.loadFiles();
+    this.toastService.info(`Navigated to page ${this.currentPage}`);
   }
 }
 
@@ -137,10 +142,11 @@ previousPage(): void {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
+        this.toastService.success(`File "${file.originalName}" downloaded successfully`);
       },
       error: (error) => {
         console.error('Error downloading file:', error);
-        alert('Failed to download file. Please try again.');
+        this.toastService.error(`Failed to download "${file.originalName}". Please try again.`);
       }
     });
   }
@@ -152,11 +158,12 @@ previousPage(): void {
     if (confirm(`Are you sure you want to delete "${file.originalName}"?`)) {
       this.fileService.softDelete(file.id).subscribe({
         next: () => {
+          this.toastService.success(`File "${file.originalName}" deleted successfully`);
           this.loadFiles();
         },
         error: (error) => {
           console.error('Error deleting file:', error);
-          alert('Failed to delete file. Please try again.');
+          this.toastService.error(`Failed to delete "${file.originalName}". Please try again.`);
         }
       });
     }
@@ -169,11 +176,12 @@ previousPage(): void {
     if (confirm(`Are you sure you want to permanently delete "${file.originalName}"? This action cannot be undone.`)) {
       this.fileService.hardDelete(file.id).subscribe({
         next: () => {
+          this.toastService.warning(`File "${file.originalName}" permanently deleted`);
           this.loadFiles();
         },
         error: (error) => {
           console.error('Error hard deleting file:', error);
-          alert('Failed to delete file. Please try again.');
+          this.toastService.error(`Failed to permanently delete "${file.originalName}". Please try again.`);
         }
       });
     }

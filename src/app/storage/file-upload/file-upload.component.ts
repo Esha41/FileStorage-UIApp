@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { FileService, UploadProgress } from '../file.service';
 import { FileUploadResponse } from '../models/file.model';
 import { Router } from '@angular/router';
+import { ToastService } from '../../shared/services/toast.service';
 
 interface FileUploadItem {
   file: File;
@@ -29,7 +30,8 @@ export class FileUploadComponent implements OnInit {
 
   constructor(
     private fileService: FileService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -127,6 +129,7 @@ export class FileUploadComponent implements OnInit {
           uploadItem.status = 'success';
           uploadItem.response = result.response;
           uploadItem.subscription = undefined;
+          this.toastService.success(`File "${uploadItem.file.name}" uploaded successfully`);
         }
       },
       error: (error) => {
@@ -134,6 +137,7 @@ export class FileUploadComponent implements OnInit {
         uploadItem.error = error.error?.title || error.message || 'Upload failed';
         uploadItem.progress = 0;
         uploadItem.subscription = undefined;
+        this.toastService.error(`Failed to upload "${uploadItem.file.name}": ${uploadItem.error}`);
       }
     });
 

@@ -192,54 +192,14 @@ src/app/
 
 ## Known Limitations
 
-1. **File Size Limit**: 
-   - Client-side limit: 1 GB per file
-   - Backend may have different limits
-   - Large file uploads may timeout depending on network/server configuration
+- File size limit: client-side maximum is 200 MB per file.
 
-2. **Browser Compatibility**:
-   - Modern browsers only (Chrome, Firefox, Edge, Safari latest versions)
-   - Some features may not work in older browsers
+- Large file uploads may timeout depending on network or server configuration.
 
-3. **Preview Limitations**:
-   - Preview functionality depends on browser capabilities
-   - Some file types may not be previewable in the browser
-   - Large files may cause performance issues during preview
+- Token storage using localStorage or sessionStorage may be vulnerable to XSS.
 
-4. **Authentication**:
-   - Token storage mechanism (localStorage/sessionStorage) may be vulnerable to XSS
-   - No automatic token refresh implemented
-   - Session management depends on backend implementation
+- Pagination is fixed at 10 items per page.
 
-5. **Error Handling**:
-   - Some error messages may be generic
-   - Network errors may not always provide detailed information
-   - Backend error format assumptions
-
-6. **Pagination**:
-   - Page size is fixed at 10 items
-   - No option to change page size from UI
-   - Total count depends on backend accuracy
-
-7. **File Upload**:
-   - No resumable upload support
-   - Failed uploads must be restarted
-   - No chunked upload for large files
-
-8. **Search/Filter**:
-   - Filters are applied on backend (requires API support)
-   - No client-side caching of filtered results
-   - Date range filtering depends on backend date format
-
-9. **Docker**:
-   - Container requires backend to be accessible from browser
-   - No built-in reverse proxy for API calls
-   - Health check requires wget (included in image)
-
-10. **Testing**:
-    - Limited unit test coverage
-    - No end-to-end tests configured
-    - Integration tests not included
 
 ## Future Enhancements
 

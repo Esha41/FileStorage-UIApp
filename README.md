@@ -37,7 +37,7 @@ A modern Angular 17 web application for managing file storage operations includi
 ### 1. Clone the Repository
 
 ```bash
-git clone <https://github.com/Esha41/FileStorage-UIApp>
+git clone <https://github.com/Esha41/FileStorage-UIApp.git>
 cd file-storage-client
 ```
 

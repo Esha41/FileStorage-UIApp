@@ -1,9 +1,7 @@
-/**
- * API Configuration
- * Update this file to change the API base URL
- */
+import { environment } from '../../../environments/environment';
+
 export const API_CONFIG = {
-  baseUrl: 'https://localhost:44356/api',
+  baseUrl: environment.apiUrl,
   filesEndpoint: '/files'
 } as const;
 

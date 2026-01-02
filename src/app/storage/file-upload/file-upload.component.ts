@@ -26,7 +26,7 @@ export class FileUploadComponent implements OnInit {
   files: FileUploadItem[] = [];
   tags: string = '';
   isDragging = false;
-  maxFileSize = 100 * 1024 * 1024; // 100 MB default
+  maxFileSize = 200 * 1024 * 1024; // 200MB default
 
   constructor(
     private fileService: FileService,
@@ -142,16 +142,6 @@ export class FileUploadComponent implements OnInit {
     });
 
     uploadItem.subscription = subscription;
-  }
-
-  /**
-   * Retry upload for a failed file
-   */
-  retryUpload(uploadItem: FileUploadItem): void {
-    if (uploadItem.subscription) {
-      uploadItem.subscription.unsubscribe();
-    }
-    this.uploadFile(uploadItem);
   }
 
   /**

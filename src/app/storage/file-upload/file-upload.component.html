@@ -95,16 +95,6 @@
       </div>
 
       <div class="file-actions">
-        <!-- Retry Button -->
-        <button
-          class="btn-retry"
-          *ngIf="fileItem.status === 'error'"
-          (click)="retryUpload(fileItem)"
-          title="Retry upload"
-        >
-          🔄 Retry
-        </button>
-
         <!-- Remove Button -->
         <button
           class="btn-remove"

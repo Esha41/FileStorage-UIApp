@@ -44,9 +44,6 @@ export class FileListComponent implements OnInit {
     this.loadFiles();
   }
 
-  /**
-   * Load files from API
-   */
   loadFiles(): void {
   this.isLoading = true;
   this.errorMessage = null;
@@ -73,21 +70,13 @@ export class FileListComponent implements OnInit {
 }
 
 
-  /**
-   * Apply filters to files
-   */
   applyFilters(): void {
-  // Reset to first page whenever filters change
   this.currentPage = 1;
 
-  // Reload data from backend with filters + pagination
   this.loadFiles();
   this.toastService.info('Filters applied');
 }
 
-  /**
-   * Go to next page
-   */
 nextPage(): void {
   if (this.currentPage < this.totalPages) {
     this.currentPage++;
@@ -104,19 +93,12 @@ previousPage(): void {
   }
 }
 
-
-  /**
-   * Go to specific page
-   */
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
     }
   }
 
-  /**
-   * Clear all filters
-   */
   clearFilters(): void {
     this.filters = {
       name: '',
@@ -128,9 +110,6 @@ previousPage(): void {
     this.applyFilters();
   }
 
-  /**
-   * Download a file
-   */
   downloadFile(file: StoredFile): void {
     this.fileService.downloadFile(file.id).subscribe({
       next: (blob) => {
@@ -151,9 +130,6 @@ previousPage(): void {
     });
   }
 
-  /**
-   * Soft delete a file
-   */
   softDelete(file: StoredFile): void {
     if (confirm(`Are you sure you want to delete "${file.originalName}"?`)) {
       this.fileService.softDelete(file.id).subscribe({
@@ -169,9 +145,6 @@ previousPage(): void {
     }
   }
 
-  /**
-   * Hard delete a file (admin only)
-   */
   hardDelete(file: StoredFile): void {
     if (confirm(`Are you sure you want to permanently delete "${file.originalName}"? This action cannot be undone.`)) {
       this.fileService.hardDelete(file.id).subscribe({
@@ -187,12 +160,8 @@ previousPage(): void {
     }
   }
 
-  /**
-   * Normalize file object to ensure tags is always an array
-   */
   private normalizeFile(file: StoredFile): StoredFile {
     if (!file.tags || !Array.isArray(file.tags)) {
-      // If tags is a string, try to parse it or convert to array
       if (typeof file.tags === 'string') {
         file.tags = file.tags ? [file.tags] : [];
       } else {
@@ -202,9 +171,6 @@ previousPage(): void {
     return file;
   }
 
-  /**
-   * Format tags for display
-   */
   formatTags(tags: any): string {
     if (!tags) return '';
     if (Array.isArray(tags)) {
@@ -216,9 +182,6 @@ previousPage(): void {
     return '';
   }
 
-  /**
-   * Check if file has tags
-   */
   hasTags(file: StoredFile): boolean {
     if (!file.tags) return false;
     if (Array.isArray(file.tags)) {
@@ -230,9 +193,6 @@ previousPage(): void {
     return false;
   }
 
-  /**
-   * Format file size
-   */
   formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -241,17 +201,11 @@ previousPage(): void {
     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   }
 
-  /**
-   * Format date
-   */
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString() + ' ' + 
            new Date(dateString).toLocaleTimeString();
   }
 
-  /**
-   * Get file icon
-   */
   getFileIcon(contentType: string): string {
     if (contentType.startsWith('image/')) return '🖼️';
     if (contentType.startsWith('video/')) return '🎥';
@@ -262,23 +216,14 @@ previousPage(): void {
     return '📎';
   }
 
-  /**
-   * Check if user is admin
-   */
   get isAdmin(): boolean {
     return this.authService.isAdmin();
   }
 
-  /**
-   * Navigate to upload page
-   */
   goToUpload(): void {
     this.router.navigate(['/storage/upload']);
   }
 
-  /**
-   * Navigate to preview page
-   */
   previewFile(file: StoredFile): void {
     this.router.navigate(['/storage/preview', file.id]);
   }

@@ -20,7 +20,6 @@ export class ToastComponent implements OnInit, OnDestroy {
     this.subscription = this.toastService.getToasts().subscribe(toast => {
       this.toasts.push(toast);
       
-      // Auto remove toast after duration
       if (toast.duration && toast.duration > 0) {
         setTimeout(() => {
           this.removeToast(toast.id);

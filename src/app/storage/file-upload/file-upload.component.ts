@@ -26,7 +26,7 @@ export class FileUploadComponent implements OnInit {
   files: FileUploadItem[] = [];
   tags: string = '';
   isDragging = false;
-  maxFileSize = 200 * 1024 * 1024; // 200MB default
+  maxFileSize = 200 * 1024 * 1024; // 200MB file size limit
 
   constructor(
     private fileService: FileService,
@@ -35,30 +35,20 @@ export class FileUploadComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Component initialization
   }
 
-  /**
-   * Handle drag over event
-   */
   onDragOver(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
     this.isDragging = true;
   }
 
-  /**
-   * Handle drag leave event
-   */
   onDragLeave(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
     this.isDragging = false;
   }
 
-  /**
-   * Handle drop event
-   */
   onDrop(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
@@ -70,9 +60,6 @@ export class FileUploadComponent implements OnInit {
     }
   }
 
-  /**
-   * Handle file input change
-   */
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -80,12 +67,8 @@ export class FileUploadComponent implements OnInit {
     }
   }
 
-  /**
-   * Process selected files
-   */
   private handleFiles(files: File[]): void {
     files.forEach(file => {
-      // Validate file size
       if (file.size > this.maxFileSize) {
         this.files.push({
           file,
@@ -96,7 +79,6 @@ export class FileUploadComponent implements OnInit {
         return;
       }
 
-      // Add file to upload queue
       const uploadItem: FileUploadItem = {
         file,
         progress: 0,
@@ -109,9 +91,6 @@ export class FileUploadComponent implements OnInit {
     });
   }
 
-  /**
-   * Upload a single file
-   */
   private uploadFile(uploadItem: FileUploadItem): void {
     uploadItem.status = 'uploading';
     uploadItem.progress = 0;
@@ -144,9 +123,6 @@ export class FileUploadComponent implements OnInit {
     uploadItem.subscription = subscription;
   }
 
-  /**
-   * Remove file from list
-   */
   removeFile(index: number): void {
     const uploadItem = this.files[index];
     if (uploadItem.subscription) {
@@ -155,16 +131,10 @@ export class FileUploadComponent implements OnInit {
     this.files.splice(index, 1);
   }
 
-  /**
-   * Clear all completed uploads
-   */
   clearCompleted(): void {
     this.files = this.files.filter(item => item.status === 'uploading' || item.status === 'pending');
   }
 
-  /**
-   * Format file size
-   */
   formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -173,9 +143,6 @@ export class FileUploadComponent implements OnInit {
     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   }
 
-  /**
-   * Get file icon based on content type
-   */
   getFileIcon(contentType: string): string {
     if (contentType.startsWith('image/')) return '🖼️';
     if (contentType.startsWith('video/')) return '🎥';
@@ -186,23 +153,14 @@ export class FileUploadComponent implements OnInit {
     return '📎';
   }
 
-  /**
-   * Navigate to file list
-   */
   goToFileList(): void {
     this.router.navigate(['/storage']);
   }
 
-  /**
-   * Check if all uploads are complete
-   */
   get allUploadsComplete(): boolean {
     return this.files.length > 0 && this.files.every(f => f.status === 'success' || f.status === 'error');
   }
 
-  /**
-   * Get upload statistics
-   */
   get uploadStats() {
     return {
       total: this.files.length,

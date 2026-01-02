@@ -16,12 +16,7 @@ export class FileService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Upload a file with progress tracking
-   * @param file The file to upload
-   * @param tags Optional tags for the file
-   * @returns Observable with upload progress (0-100) and final response
-   */
+  //upload file
   upload(file: File, tags?: string[]): Observable<UploadProgress> {
     const formData = new FormData();
     formData.append('file', file);
@@ -46,11 +41,7 @@ export class FileService {
     );
   }
 
-  /**
-   * Get list of files with optional filtering and pagination
-   * @param params Query parameters for filtering and pagination
-   * @returns Observable of file array
-   */
+  //get list files
   listFiles(params?: FileListParams): Observable<StoredFile[]> {
     let httpParams = new HttpParams();
     
@@ -64,35 +55,23 @@ export class FileService {
       if (params.dateTo) httpParams = httpParams.set('dateTo', params.dateTo);
     }
    else {
-    // If no params passed, at least send page 1 & size 100 by default
+    // If no params passed, send page 1 & size 100 by default
     httpParams = httpParams.set('pageNumber', '1').set('pageSize', '  100');
   }
     return this.http.get<StoredFile[]>(this.apiUrl, { params: httpParams });
   }
 
-  /**
-   * Get file by ID
-   * @param id File ID
-   * @returns Observable of file metadata
-   */
+  //get file by id
   getFile(id: string): Observable<StoredFile> {
     return this.http.get<StoredFile>(API_URLS.fileById(id));
   }
 
-  /**
-   * Download a file
-   * @param id File ID
-   * @returns Observable of file blob
-   */
+  //download file
   downloadFile(id: string): Observable<Blob> {
     return this.http.get(API_URLS.fileDownload(id), { responseType: 'blob' });
   }
 
-  /**
-   * Preview a file (for images and PDFs)
-   * @param id File ID
-   * @returns Observable of file blob
-   */
+  //preview file
   previewFile(id: string): Observable<Blob> {
     return this.http.get(API_URLS.filePreview(id), { 
       responseType: 'blob',
@@ -100,20 +79,12 @@ export class FileService {
     });
   }
 
-  /**
-   * Soft delete a file
-   * @param id File ID
-   * @returns Observable
-   */
+  //soft delete file
   softDelete(id: string): Observable<void> {
     return this.http.delete<void>(API_URLS.fileSoftDelete(id));
   }
 
-  /**
-   * Hard delete a file (admin only)
-   * @param id File ID
-   * @returns Observable
-   */
+  //hard delete file
   hardDelete(id: string): Observable<void> {
     return this.http.delete<void>(API_URLS.fileHardDelete(id));
   }

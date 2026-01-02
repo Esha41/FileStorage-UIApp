@@ -41,18 +41,12 @@ export class LoginComponent {
     private authService: AuthService,
     private router: Router
   ) {
-    // Don't auto-redirect - allow users to access login page even if authenticated
-    // This allows users to log out and log back in with different credentials
-
     this.loginForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(3)]]
     });
   }
 
-  /**
-   * Fill form with test user credentials
-   */
   fillCredentials(user: TestUser): void {
     this.loginForm.patchValue({
       username: user.username,
@@ -72,8 +66,6 @@ export class LoginComponent {
     const { username, password } = this.loginForm.value;
 
     try {
-      // Clear any existing session before logging in
-      // This allows users to switch accounts
       if (this.authService.isAuthenticated()) {
         this.authService.logout();
       }
@@ -82,7 +74,6 @@ export class LoginComponent {
       const { token, user } = this.authService.login(username, password);
       
       if (token) {
-        // Redirect to storage page
         this.router.navigate(['/storage']);
       } else {
         this.errorMessage = 'Login failed. Please try again.';

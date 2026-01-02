@@ -1,4 +1,4 @@
-# Stage 1: Build the Angular application
+# Build the Angular application
 FROM node:18-alpine AS build
 
 WORKDIR /app
@@ -22,7 +22,7 @@ RUN echo "Checking build output..." && \
     ls -la /app/dist/file-storage-client/browser/ || \
     (echo "ERROR: Build output directory not found!" && exit 1)
 
-# Stage 2: Serve the application with nginx
+# Serve the application with nginx
 FROM nginx:alpine
 
 # Install wget for healthcheck

@@ -17,10 +17,7 @@ export class AuthService {
 
   constructor(private router: Router) {}
 
-  /**
-   * Generates a mock JWT token with proper structure (header.payload.signature)
-   * The token includes user information and role in the payload
-   */
+  //  mock JWT token
   private generateMockJWT(username: string, role: 'user' | 'admin'): string {
     const header = {
       alg: 'HS256',
@@ -32,7 +29,7 @@ export class AuthService {
       userId: `user-${Date.now()}`,
       role: role,
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 hours
+      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) 
     };
 
     // Encode header and payload (mock signature)
@@ -44,7 +41,6 @@ export class AuthService {
   }
 
   login(username: string, password: string): { token: string; user: User } {
-    // Determine role based on username (admin for 'admin' username, user for others)
     const role: 'user' | 'admin' = username.toLowerCase() === 'admin' ? 'admin' : 'user';
     
     const user: User = {

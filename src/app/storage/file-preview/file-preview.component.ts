@@ -37,17 +37,12 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Load file metadata and preview
-   */
   loadFile(): void {
     this.isLoading = true;
     this.errorMessage = null;
 
-    // Get file metadata from the list endpoint (since GET /api/files/{id} doesn't exist)
     this.fileService.listFiles().subscribe({
       next: (response) => {
-        // Handle different response formats
         let files: StoredFile[] = [];
         
         if (Array.isArray(response)) {
@@ -58,7 +53,6 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
           files = (response as any).items || (response as any).results || [];
         }
 
-        // Find the file by ID
         const file = files.find(f => f.id === this.fileId);
         
         if (file) {
@@ -77,9 +71,6 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Load file preview
-   */
   loadPreview(): void {
     if (!this.file) return;
 
@@ -90,10 +81,8 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
       this.fileService.previewFile(this.fileId).subscribe({
         next: (blob) => {
           try {
-            // Create object URL for the blob
             if (blob && blob.size > 0) {
               this.previewUrl = URL.createObjectURL(blob);
-              // Sanitize URL for iframe (especially for PDFs)
               this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.previewUrl);
               console.log('Preview URL created:', this.previewUrl, 'Blob size:', blob.size, 'Content type:', blob.type);
               this.isLoading = false;
@@ -115,14 +104,10 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      // For non-image/PDF files, we can still show file info
       this.isLoading = false;
     }
   }
 
-  /**
-   * Download file
-   */
   downloadFile(): void {
     if (!this.file) return;
 
@@ -144,9 +129,6 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Format file size
-   */
   formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -155,38 +137,23 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   }
 
-  /**
-   * Format date
-   */
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString() + ' ' + 
            new Date(dateString).toLocaleTimeString();
   }
 
-  /**
-   * Go back to file list
-   */
   goBack(): void {
     this.router.navigate(['/storage']);
   }
 
-  /**
-   * Check if file is image
-   */
   get isImage(): boolean {
     return this.file?.contentType.startsWith('image/') || false;
   }
 
-  /**
-   * Check if file is PDF
-   */
   get isPdf(): boolean {
     return this.file?.contentType.includes('pdf') || false;
   }
 
-  /**
-   * Format tags for display
-   */
   formatTags(tags: any): string {
     if (!tags) return '';
     if (Array.isArray(tags)) {
@@ -198,9 +165,6 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  /**
-   * Check if file has tags
-   */
   hasTags(file: StoredFile): boolean {
     if (!file.tags) return false;
     if (Array.isArray(file.tags)) {
@@ -212,9 +176,6 @@ export class FilePreviewComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  /**
-   * Cleanup preview URL on destroy
-   */
   ngOnDestroy(): void {
     if (this.previewUrl) {
       URL.revokeObjectURL(this.previewUrl);
